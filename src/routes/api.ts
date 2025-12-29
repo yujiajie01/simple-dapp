@@ -2,6 +2,16 @@ import { Router } from 'express';
 import { Web3 } from 'web3';
 import { ethers } from 'ethers';
 
+// BigInt 序列化函数
+const serializeBigInt = (obj: any): any => {
+  return JSON.parse(JSON.stringify(obj, (key, value) => {
+    if (typeof value === 'bigint') {
+      return value.toString();
+    }
+    return value;
+  }));
+};
+
 // 简单的内存缓存
 const cache = new Map();
 const CACHE_DURATION = 30000; // 30秒缓存
@@ -209,10 +219,10 @@ router.get('/network', async (req, res) => {
       setCache(cacheKey, networkData);
     }
 
-    res.json({
+    res.json(serializeBigInt({
       success: true,
       data: networkData
-    });
+    }));
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -290,7 +300,7 @@ router.post('/transfer/eth', validateTransferBody, async (req, res) => {
 
     const receipt = await web3.eth.sendTransaction(tx);
 
-    res.json({
+    res.json(serializeBigInt({
       success: true,
       data: {
         transactionHash: receipt.transactionHash,
@@ -299,7 +309,7 @@ router.post('/transfer/eth', validateTransferBody, async (req, res) => {
         to,
         amount
       }
-    });
+    }));
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -343,7 +353,7 @@ router.post('/transfer/token', validateTransferBody, async (req, res) => {
       gas: '100000'
     });
 
-    res.json({
+    res.json(serializeBigInt({
       success: true,
       data: {
         transactionHash: tx.transactionHash,
@@ -352,7 +362,7 @@ router.post('/transfer/token', validateTransferBody, async (req, res) => {
         to,
         amount
       }
-    });
+    }));
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -402,10 +412,10 @@ router.get('/token/info', async (req, res) => {
       setTimeout(() => cache.delete(cacheKey), 300000);
     }
 
-    res.json({
+    res.json(serializeBigInt({
       success: true,
       data: tokenData
-    });
+    }));
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -489,10 +499,10 @@ router.get('/transactions/:address', validateAddress, async (req, res) => {
       setCache(cacheKey, cachedResult);
     }
 
-    res.json({
+    res.json(serializeBigInt({
       success: true,
       data: cachedResult
-    });
+    }));
   } catch (error: any) {
     res.status(500).json({
       success: false,
