@@ -1,33 +1,16 @@
-## 🌍 Language / 语言
+# Simple DApp - Node.js Web3 Token Application
 
 <div align="center">
 
-[<img src="https://img.shields.io/badge/English-007acc?style=flat-square&logo=github" alt="English" height="25">](#english) &nbsp;&nbsp;
-[<img src="https://img.shields.io/badge/中文-red?style=flat-square&logo=github" alt="中文" height="25">](#chinese)
+[![中文](https://img.shields.io/badge/中文-red?style=flat-square&logo=github)](README_zh.md)
 
 </div>
 
----
-
-<a id="english"></a>
-## 🇺🇸 English Version
-
-# Simple DApp - Node.js Web3 Token Application
-
 A simple decentralized application (DApp) based on Node.js + TypeScript, including ERC-20 token contract and complete backend API.
 
-<a id="chinese"></a>
-## 🇨🇳 中文版本
+## 🚀 Features
 
-# Simple DApp - Node.js Web3 代币应用
-
-一个基于 Node.js + TypeScript 的简单去中心化应用（DApp），包含 ERC-20 代币合约和完整的后端 API。
-
-## 🚀 Features / 功能特性
-
-### 🇺🇸 English
-
-#### Core Features
+### Core Features
 - ✅ **ERC-20 Token Smart Contract** - Complete token implementation supporting transfers, approvals and other standard functions
 - ✅ **Token Minting and Transfer** - Secure token minting and transfer operations
 - ✅ **ETH Transfer Function** - Native Ethereum transfer support
@@ -35,14 +18,14 @@ A simple decentralized application (DApp) based on Node.js + TypeScript, includi
 - ✅ **Transaction History Query** - Paginated transaction history records
 - ✅ **Network Information View** - Real-time network status monitoring
 
-#### User Experience
+### User Experience
 - ✅ **Beautiful Frontend Interface** - Modern responsive design
 - ✅ **Real-time Form Validation** - Smart input validation and error prompts
 - ✅ **Loading State Indicators** - Friendly user feedback
 - ✅ **Copy to Clipboard** - One-click copy addresses and transaction hashes
 - ✅ **Notification System** - Real-time operation status feedback
 
-#### Technical Features
+### Technical Features
 - ✅ **High-performance Caching** - Smart caching for improved response speed
 - ✅ **Concurrent Processing** - Optimized concurrent request performance
 - ✅ **Error Handling** - Comprehensive error handling mechanisms
@@ -50,48 +33,15 @@ A simple decentralized application (DApp) based on Node.js + TypeScript, includi
 - ✅ **Unit Testing** - Comprehensive smart contract testing
 - ✅ **Code Layering** - Clear architectural design
 
-### 🇨🇳 中文
+## 🛠️ Technology Stack
 
-#### 核心功能
-- ✅ **ERC-20 代币智能合约** - 完整的代币实现，支持转账、授权等标准功能
-- ✅ **代币铸造和转账** - 安全的代币铸造和转账操作
-- ✅ **ETH 转账功能** - 原生以太坊转账支持
-- ✅ **余额查询** - 实时查询 ETH 和代币余额
-- ✅ **交易历史查询** - 分页查询交易历史记录
-- ✅ **网络信息查看** - 实时网络状态监控
-
-#### 用户体验
-- ✅ **美观的前端界面** - 现代化响应式设计
-- ✅ **实时表单验证** - 智能输入验证和错误提示
-- ✅ **加载状态指示** - 友好的用户反馈
-- ✅ **复制到剪贴板** - 一键复制地址和交易哈希
-- ✅ **通知系统** - 实时操作状态反馈
-
-#### 技术特性
-- ✅ **高性能缓存** - 智能缓存提升响应速度
-- ✅ **并发处理** - 优化并发请求性能
-- ✅ **错误处理** - 完善的错误处理机制
-- ✅ **TypeScript 支持** - 完整的类型安全
-- ✅ **单元测试** - 全面的智能合约测试
-- ✅ **代码分层** - 清晰的架构设计
-
-## 🛠️ Technology Stack / 技术栈
-
-### 🇺🇸 English
 - **Backend**: Node.js + TypeScript + Express
 - **Blockchain**: Solidity + Hardhat + Web3.js + Ethers.js
 - **Frontend**: HTML5 + CSS3 + JavaScript (ES6+)
 - **Testnet**: Hardhat Local Network
 
-### 🇨🇳 中文
-- **后端**: Node.js + TypeScript + Express
-- **区块链**: Solidity + Hardhat + Web3.js + Ethers.js
-- **前端**: HTML5 + CSS3 + JavaScript (ES6+)
-- **测试网**: Hardhat 本地网络
+## 📦 Installation
 
-## 📦 Installation / 安装依赖
-
-### 🇺🇸 English
 ```bash
 # Install dependencies using yarn
 yarn install
@@ -100,18 +50,8 @@ yarn install
 npm install
 ```
 
-### 🇨🇳 中文
-```bash
-# 使用 yarn 安装依赖
-yarn install
+## ⚙️ Environment Configuration
 
-# 或使用 npm
-npm install
-```
-
-## ⚙️ Environment Configuration / 环境配置
-
-### 🇺🇸 English
 1. Copy environment variable template:
 ```bash
 cp .env.example .env
@@ -132,30 +72,8 @@ PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 PORT=3000
 ```
 
-### 🇨🇳 中文
-1. 复制环境变量模板：
-```bash
-cp .env.example .env
-```
+## 🚀 Running the Application
 
-2. 配置 `.env` 文件：
-```env
-# 区块链网络配置
-RPC_URL=http://127.0.0.1:8545
-
-# 合约地址（部署后更新）
-CONTRACT_ADDRESS=
-
-# 开发账户私钥（仅用于测试）
-PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-
-# 服务器配置
-PORT=3000
-```
-
-## 🚀 Running the Application / 运行应用
-
-### 🇺🇸 English
 #### 1. Start Local Blockchain Network
 ```bash
 # Terminal 1: Start Hardhat local network
@@ -182,36 +100,8 @@ yarn dev
 #### 4. Access the Application
 Open browser and visit: http://localhost:3000
 
-### 🇨🇳 中文
-#### 1. 启动本地区块链网络
-```bash
-# 终端 1: 启动 Hardhat 本地网络
-npx hardhat node
-```
+## 📋 API Documentation
 
-#### 2. 编译和部署智能合约
-```bash
-# 终端 2: 编译合约
-yarn compile-contract
-
-# 部署合约
-yarn deploy-contract
-```
-
-部署成功后，将合约地址复制到 `.env` 文件中的 `CONTRACT_ADDRESS`。
-
-#### 3. 启动后端服务
-```bash
-# 终端 3: 启动开发服务器
-yarn dev
-```
-
-#### 4. 访问应用
-打开浏览器访问：http://localhost:3000
-
-## 📋 API Documentation / API 接口文档
-
-### 🇺🇸 English
 - `GET /api/health` - Health check endpoint
 - `GET /api/network` - Get network information (cached)
 - `GET /api/balance/:address` - Query account balance
@@ -220,25 +110,8 @@ yarn dev
 - `GET /api/token/info` - Get token information (cached)
 - `GET /api/transactions/:address` - Get transaction history (paginated)
 
-### 🇨🇳 中文
-- `GET /api/health` - 健康检查接口
-- `GET /api/network` - 获取网络信息（带缓存）
-- `GET /api/balance/:address` - 查询账户余额
-- `POST /api/transfer/eth` - ETH 转账
-- `POST /api/transfer/token` - 代币转账
-- `GET /api/token/info` - 获取代币信息（带缓存）
-- `GET /api/transactions/:address` - 获取交易历史（支持分页）
-## 🧪 Testing Instructions / 测试说明
-  "success": true,
-  "data": {
-    "address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-    "ethBalance": "9999.999",
-    "tokenBalance": "999999"
-  }
-}
-```
+## 🧪 Testing Instructions
 
-### 🇺🇸 English
 ```bash
 # Run all contract tests
 yarn test-contract
@@ -254,25 +127,7 @@ Hardhat local network provides 20 pre-funded accounts:
 - **Private Key**: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
 - **Balance**: 10000 ETH
 
-### 🇨🇳 中文
-```bash
-# 运行所有合约测试
-yarn test-contract
-
-# 查看测试覆盖率
-npx hardhat coverage
-```
-
-### 默认账户
-Hardhat 本地网络提供 20 个预资金账户：
-
-- **账户 0**: `0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266`
-- **私钥**: `0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`
-- **余额**: 10000 ETH
-
-## 🛠️ Development Guide / 开发指南
-
-### 🇺🇸 English
+## 🛠️ Development Guide
 
 #### Project Architecture
 ```
@@ -302,18 +157,143 @@ simple-dapp/
 - **Input Validation**: Strict validation required
 - **Error Handling**: No sensitive info in production
 
-### 🇨🇳 中文
+## 🏗️ Project Structure
 
-#### 项目架构
 ```
 simple-dapp/
-├── contracts/          # 智能合约 (Solidity)
-├── src/
-│   ├── routes/         # API 路由
-│   ├── middleware.ts   # 中间件
-│   └── index.ts        # 应用入口
-├── public/             # 前端静态文件
-├── test/               # 合约测试
+├── contracts/          # Smart contracts
+│   └── SimpleToken.sol
+├── scripts/            # Deployment scripts
+│   └── deploy.ts
+├── src/                # Backend source code
+│   └── index.ts
+├── public/             # Frontend static files
+│   └── index.html
+├── package.json        # Project configuration
+├── tsconfig.json       # TypeScript configuration
+├── hardhat.config.ts   # Hardhat configuration
+└── README.md          # Project documentation
+```
+
+## 🔒 Security Considerations
+
+⚠️ **Important Reminders**:
+
+1. **Private Key Security**: Never use real private keys in test environments
+2. **Test Networks**: Only develop on local test networks or testnets
+3. **Environment Variables**: Do not commit `.env` files to version control
+4. **Production Deployment**: Use appropriate key management services and security measures
+
+## 🚀 Deployment Guide
+
+#### Local Development
+```bash
+# 1. Install dependencies
+yarn install
+
+# 2. Start blockchain network
+npx hardhat node
+
+# 3. Compile and deploy contracts
+yarn compile-contract
+yarn deploy-contract
+
+# 4. Configure environment variables
+cp .env.example .env
+# Edit .env file, set CONTRACT_ADDRESS
+
+# 5. Start development server
+yarn dev
+```
+
+#### Production Deployment
+```bash
+# Install PM2
+npm install -g pm2
+
+# Build project
+yarn build
+
+# Start with PM2
+pm2 start dist/index.js --name "simple-dapp"
+```
+
+## 🤝 Contributing Guide
+
+1. Fork the project
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Create Pull Request
+
+### Commit Standards
+- Use clear commit messages
+- Include relevant test cases
+- Update documentation to reflect changes
+- Follow existing code style
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔧 Troubleshooting
+
+#### Common Issues
+- **Contract Deployment Failed**: Check Hardhat network configuration
+- **API Request Failed**: Check RPC_URL configuration
+- **Token Transfer Failed**: Check sender balance and contract address
+
+### Debugging Tips
+- Use browser developer tools to view network requests
+- Check server logs: `pm2 logs simple-dapp`
+- Use `/api/health` endpoint to check service status
+
+## 📚 Learning Resources
+
+- [Web3.js Documentation](https://web3js.readthedocs.io/)
+- [Ethers.js Documentation](https://docs.ethers.org/)
+- [Solidity Documentation](https://docs.soliditylang.org/)
+- [Hardhat Documentation](https://hardhat.org/docs)
+
+### Learning Path
+1. **Blockchain Basics**: Understand how blockchain works
+2. **Solidity Programming**: Learn smart contract development
+3. **Web3.js/Ethers.js**: Master blockchain interaction
+4. **Hardhat**: Learn contract testing and deployment
+5. **DApp Development**: Build decentralized applications
+
+## 📈 Version History
+
+#### v1.0.0 (2024-01-XX)
+- ✨ Complete ERC-20 token smart contract
+- 🚀 Modern frontend interface
+- 📊 Real-time network monitoring
+- 💰 ETH and token transfer functionality
+- 📋 Paginated transaction history queries
+- 🧪 Complete unit testing suite
+- ⚡ Performance optimization and caching mechanisms
+- 🔒 Enhanced security measures
+
+### Upcoming Features
+- 🔐 Wallet connection integration (MetaMask)
+- 📱 Mobile responsive optimization
+- 🌐 Multi-network support
+
+## 🙏 Acknowledgments
+
+Thanks to the following open source projects and communities:
+
+- [Hardhat](https://hardhat.org/) - Ethereum development environment
+- [Web3.js](https://web3js.readthedocs.io/) - Ethereum JavaScript API
+- [Ethers.js](https://docs.ethers.org/) - Ethereum interaction library
+- [Solidity](https://soliditylang.org/) - Smart contract programming language
+- [OpenZeppelin](https://openzeppelin.com/) - Secure smart contract library
+
+Special thanks to the Ethereum community for their contributions to the Web3 ecosystem!
+
+---
+
+**🎉 Wish you all the best in your Web3 development journey!**
 └── scripts/            # 部署脚本
 ```
 
