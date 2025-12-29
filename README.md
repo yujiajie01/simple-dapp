@@ -1,4 +1,4 @@
-# Simple DApp - Node.js Web3 Token Application
+# Simple DApp - Next.js Web3 Token Application
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 
 </div>
 
-A simple decentralized application (DApp) based on Node.js + TypeScript, including ERC-20 token contract and complete backend API.
+A modern decentralized application (DApp) built with Next.js 14 + TypeScript, featuring ERC-20 token contracts and a complete full-stack Web3 experience.
 
 ## 🚀 Features
 
@@ -19,25 +19,28 @@ A simple decentralized application (DApp) based on Node.js + TypeScript, includi
 - ✅ **Network Information View** - Real-time network status monitoring
 
 ### User Experience
-- ✅ **Beautiful Frontend Interface** - Modern responsive design
+- ✅ **Modern React Frontend** - Built with Next.js 14 and App Router
+- ✅ **RainbowKit Integration** - Seamless wallet connection experience
+- ✅ **Responsive Design** - Mobile-first design with Tailwind CSS
 - ✅ **Real-time Form Validation** - Smart input validation and error prompts
 - ✅ **Loading State Indicators** - Friendly user feedback
-- ✅ **Copy to Clipboard** - One-click copy addresses and transaction hashes
-- ✅ **Notification System** - Real-time operation status feedback
+- ✅ **TypeScript Support** - Complete type safety throughout
 
 ### Technical Features
-- ✅ **High-performance Caching** - Smart caching for improved response speed
+- ✅ **Next.js API Routes** - Server-side API endpoints with caching
+- ✅ **Wagmi Integration** - Modern React hooks for Web3
 - ✅ **Concurrent Processing** - Optimized concurrent request performance
 - ✅ **Error Handling** - Comprehensive error handling mechanisms
-- ✅ **TypeScript Support** - Complete type safety
-- ✅ **Unit Testing** - Comprehensive smart contract testing
-- ✅ **Code Layering** - Clear architectural design
+- ✅ **Smart Contract Testing** - Comprehensive smart contract testing
+- ✅ **Clean Architecture** - Well-structured codebase
 
 ## 🛠️ Technology Stack
 
-- **Backend**: Node.js + TypeScript + Express
+- **Framework**: Next.js 14 (App Router)
+- **Frontend**: React 18 + TypeScript + Tailwind CSS
+- **Web3**: Wagmi + RainbowKit + Viem
 - **Blockchain**: Solidity + Hardhat + Web3.js + Ethers.js
-- **Frontend**: HTML5 + CSS3 + JavaScript (ES6+)
+- **Deployment**: Vercel-ready configuration
 - **Testnet**: Hardhat Local Network
 
 ## 📦 Installation
@@ -48,6 +51,9 @@ yarn install
 
 # Or using npm
 npm install
+
+# Or using pnpm
+pnpm install
 ```
 
 ## ⚙️ Environment Configuration
@@ -89,26 +95,30 @@ yarn compile-contract
 yarn deploy-contract
 ```
 
-After successful deployment, copy the contract address to `CONTRACT_ADDRESS` in the `.env` file.
+After successful deployment, update the contract address in the environment variables.
 
-#### 3. Start Backend Service
+#### 3. Start Next.js Development Server
 ```bash
-# Terminal 3: Start development server
+# Terminal 3: Start Next.js development server
 yarn dev
 ```
 
 #### 4. Access the Application
 Open browser and visit: http://localhost:3000
 
-## 📋 API Documentation
+The application will automatically start both the frontend and API routes.
+
+## 📋 API Routes
+
+The application uses Next.js API Routes for backend functionality:
 
 - `GET /api/health` - Health check endpoint
-- `GET /api/network` - Get network information (cached)
-- `GET /api/balance/:address` - Query account balance
-- `POST /api/transfer/eth` - ETH transfer
-- `POST /api/transfer/token` - Token transfer
-- `GET /api/token/info` - Get token information (cached)
-- `GET /api/transactions/:address` - Get transaction history (paginated)
+- `GET /api/networks` - Get available networks list
+- `GET /api/network/[network]` - Get specific network information
+- `GET /api/balance/[address]/[network]` - Query account balance
+- `POST /api/transfer/eth/[network]` - ETH transfer
+- `GET /api/token/info/[network]` - Get token information
+- `GET /api/transactions/[address]/[network]` - Get transaction history (paginated)
 
 ## 🧪 Testing Instructions
 
