@@ -40,11 +40,56 @@ function setCache(key: string, data: any): void {
   });
 }
 
-const router = Router();
+// 网络配置
+const NETWORKS = {
+  localhost: {
+    name: 'Localhost',
+    rpcUrl: 'http://127.0.0.1:8545',
+    chainId: 31337,
+    currency: 'ETH',
+    blockExplorer: null
+  },
+  mainnet: {
+    name: 'Ethereum Mainnet',
+    rpcUrl: process.env.MAINNET_RPC_URL || 'https://mainnet.infura.io/v3/YOUR_INFURA_KEY',
+    chainId: 1,
+    currency: 'ETH',
+    blockExplorer: 'https://etherscan.io'
+  },
+  sepolia: {
+    name: 'Sepolia Testnet',
+    rpcUrl: process.env.SEPOLIA_RPC_URL || 'https://sepolia.infura.io/v3/YOUR_INFURA_KEY',
+    chainId: 11155111,
+    currency: 'SepoliaETH',
+    blockExplorer: 'https://sepolia.etherscan.io'
+  },
+  goerli: {
+    name: 'Goerli Testnet',
+    rpcUrl: process.env.GOERLI_RPC_URL || 'https://goerli.infura.io/v3/YOUR_INFURA_KEY',
+    chainId: 5,
+    currency: 'GoerliETH',
+    blockExplorer: 'https://goerli.etherscan.io'
+  }
+};
 
-// Web3 连接
-const web3 = new Web3(process.env.RPC_URL || 'http://127.0.0.1:8545');
-const provider = new ethers.JsonRpcProvider(process.env.RPC_URL || 'http://127.0.0.1:8545');
+// 获取网络配置的辅助函数
+function getNetworkConfig(network: string = 'localhost') {
+  return NETWORKS[network as keyof typeof NETWORKS] || NETWORKS.localhost;
+}
+
+// 创建网络特定的 Web3 实例
+function createWeb3Instance(network: string = 'localhost') {
+  const config = getNetworkConfig(network);
+  return new Web3(config.rpcUrl);
+}
+
+// 创建网络特定的 ethers provider
+function createEthersProvider(network: string = 'localhost') {
+  const config = getNetworkConfig(network);
+  return new ethers.JsonRpcProvider(config.rpcUrl);
+}
+
+const router = Router();
 
 // 简单的代币合约 ABI
 const TOKEN_ABI = [
@@ -129,7 +174,8 @@ const TOKEN_ABI = [
 // 输入验证中间件
 const validateAddress = (req: any, res: any, next: any) => {
   const { address } = req.params;
-  if (!address || !web3.utils.isAddress(address)) {
+  const web3Instance = new Web3(); // 使用默认实例进行地址验证
+  if (!address || !web3Instance.utils.isAddress(address)) {
     return res.status(400).json({
       success: false,
       error: 'Invalid address format'
@@ -140,6 +186,7 @@ const validateAddress = (req: any, res: any, next: any) => {
 
 const validateTransferBody = (req: any, res: any, next: any) => {
   const { to, amount, privateKey } = req.body;
+  const web3Instance = new Web3(); // 使用默认实例进行验证
 
   if (!to || !amount || !privateKey) {
     return res.status(400).json({
@@ -148,7 +195,7 @@ const validateTransferBody = (req: any, res: any, next: any) => {
     });
   }
 
-  if (!web3.utils.isAddress(to)) {
+  if (!web3Instance.utils.isAddress(to)) {
     return res.status(400).json({
       success: false,
       error: 'Invalid recipient address'
@@ -172,6 +219,19 @@ const validateTransferBody = (req: any, res: any, next: any) => {
 
   next();
 };
+
+// 获取支持的网络列表
+router.get('/networks', (req, res) => {
+  const networks = Object.keys(NETWORKS).map(key => ({
+    id: key,
+    ...NETWORKS[key as keyof typeof NETWORKS]
+  }));
+
+  res.json({
+    success: true,
+    data: networks
+  });
+});
 
 // 健康检查
 router.get('/health', (req, res) => {
@@ -197,23 +257,31 @@ router.get('/health', (req, res) => {
 });
 
 // 获取网络信息
-router.get('/network', async (req, res) => {
+router.get('/network/:network?', async (req, res) => {
   try {
-    const cacheKey = 'network_info';
+    const network = req.params.network || 'localhost';
+    const cacheKey = `network_info_${network}`;
     let networkData = getCache(cacheKey);
 
     if (!networkData) {
+      const web3Instance = createWeb3Instance(network);
+      const config = getNetworkConfig(network);
+
       // 并发生成所有网络请求以提高性能
       const [networkId, blockNumber, gasPrice] = await Promise.all([
-        web3.eth.net.getId(),
-        web3.eth.getBlockNumber(),
-        web3.eth.getGasPrice()
+        web3Instance.eth.net.getId(),
+        web3Instance.eth.getBlockNumber(),
+        web3Instance.eth.getGasPrice()
       ]);
 
       networkData = {
+        network: config.name,
         networkId,
+        chainId: config.chainId,
         blockNumber: Number(blockNumber),
-        gasPrice: web3.utils.fromWei(gasPrice, 'gwei')
+        gasPrice: web3Instance.utils.fromWei(gasPrice, 'gwei'),
+        currency: config.currency,
+        blockExplorer: config.blockExplorer
       };
 
       setCache(cacheKey, networkData);
@@ -233,20 +301,22 @@ router.get('/network', async (req, res) => {
 });
 
 // 获取账户余额
-router.get('/balance/:address', validateAddress, async (req, res) => {
+router.get('/balance/:address/:network?', validateAddress, async (req, res) => {
   try {
-    const { address } = req.params;
+    const { address, network = 'localhost' } = req.params;
+    const web3Instance = createWeb3Instance(network);
 
-    const balance = await web3.eth.getBalance(address);
-    const balanceInEth = web3.utils.fromWei(balance, 'ether');
+    const balance = await web3Instance.eth.getBalance(address);
+    const balanceInEth = web3Instance.utils.fromWei(balance, 'ether');
 
     // 如果有合约地址，获取代币余额
     let tokenBalance = null;
-    if (process.env.CONTRACT_ADDRESS) {
+    const contractAddress = process.env[`${network.toUpperCase()}_CONTRACT_ADDRESS`] || process.env.CONTRACT_ADDRESS;
+    if (contractAddress) {
       try {
-        const contract = new web3.eth.Contract(TOKEN_ABI, process.env.CONTRACT_ADDRESS);
+        const contract = new web3Instance.eth.Contract(TOKEN_ABI, contractAddress);
         const tokenBalanceRaw = await contract.methods.balanceOf(address).call();
-        tokenBalance = web3.utils.fromWei(String(tokenBalanceRaw), 'ether');
+        tokenBalance = web3Instance.utils.fromWei(String(tokenBalanceRaw), 'ether');
       } catch (error) {
         console.log('获取代币余额失败:', error);
       }
@@ -256,8 +326,10 @@ router.get('/balance/:address', validateAddress, async (req, res) => {
       success: true,
       data: {
         address,
+        network: getNetworkConfig(network).name,
         ethBalance: balanceInEth,
-        tokenBalance
+        tokenBalance,
+        currency: getNetworkConfig(network).currency
       }
     });
   } catch (error: any) {
@@ -270,17 +342,19 @@ router.get('/balance/:address', validateAddress, async (req, res) => {
 });
 
 // 发送 ETH 转账
-router.post('/transfer/eth', validateTransferBody, async (req, res) => {
+router.post('/transfer/eth/:network?', validateTransferBody, async (req, res) => {
   try {
     const { to, amount, privateKey } = req.body;
+    const network = req.params.network || 'localhost';
+    const web3Instance = createWeb3Instance(network);
 
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-    web3.eth.accounts.wallet.add(account);
+    const account = web3Instance.eth.accounts.privateKeyToAccount(privateKey);
+    web3Instance.eth.accounts.wallet.add(account);
 
     // 检查发送者余额
-    const balance = await web3.eth.getBalance(account.address);
-    const amountInWei = web3.utils.toWei(amount, 'ether');
-    const gasPrice = await web3.eth.getGasPrice();
+    const balance = await web3Instance.eth.getBalance(account.address);
+    const amountInWei = web3Instance.utils.toWei(amount, 'ether');
+    const gasPrice = await web3Instance.eth.getGasPrice();
     const estimatedGasCost = BigInt('21000') * BigInt(String(gasPrice));
     const totalCost = BigInt(String(amountInWei)) + estimatedGasCost;
 
@@ -298,7 +372,7 @@ router.post('/transfer/eth', validateTransferBody, async (req, res) => {
       gas: 21000
     };
 
-    const receipt = await web3.eth.sendTransaction(tx);
+    const receipt = await web3Instance.eth.sendTransaction(tx);
 
     res.json(serializeBigInt({
       success: true,
@@ -320,10 +394,12 @@ router.post('/transfer/eth', validateTransferBody, async (req, res) => {
 });
 
 // 发送代币转账
-router.post('/transfer/token', validateTransferBody, async (req, res) => {
+router.post('/transfer/token/:network?', validateTransferBody, async (req, res) => {
   try {
     const { to, amount, privateKey } = req.body;
-    const contractAddress = process.env.CONTRACT_ADDRESS;
+    const network = req.params.network || 'localhost';
+    const web3Instance = createWeb3Instance(network);
+    const contractAddress = process.env[`${network.toUpperCase()}_CONTRACT_ADDRESS`] || process.env.CONTRACT_ADDRESS;
 
     if (!contractAddress) {
       return res.status(400).json({
@@ -332,14 +408,14 @@ router.post('/transfer/token', validateTransferBody, async (req, res) => {
       });
     }
 
-    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
-    web3.eth.accounts.wallet.add(account);
+    const account = web3Instance.eth.accounts.privateKeyToAccount(privateKey);
+    web3Instance.eth.accounts.wallet.add(account);
 
-    const contract = new web3.eth.Contract(TOKEN_ABI, contractAddress);
+    const contract = new web3Instance.eth.Contract(TOKEN_ABI, contractAddress);
 
     // 检查代币余额
     const tokenBalance = await contract.methods.balanceOf(account.address).call();
-    const amountInWei = web3.utils.toWei(amount, 'ether');
+    const amountInWei = web3Instance.utils.toWei(amount, 'ether');
 
     if (BigInt(String(tokenBalance)) < BigInt(String(amountInWei))) {
       return res.status(400).json({
@@ -373,22 +449,24 @@ router.post('/transfer/token', validateTransferBody, async (req, res) => {
 });
 
 // 获取代币信息
-router.get('/token/info', async (req, res) => {
+router.get('/token/info/:network?', async (req, res) => {
   try {
-    const contractAddress = process.env.CONTRACT_ADDRESS;
+    const network = req.params.network || 'localhost';
+    const contractAddress = process.env[`${network.toUpperCase()}_CONTRACT_ADDRESS`] || process.env.CONTRACT_ADDRESS;
 
     if (!contractAddress) {
       return res.status(400).json({
         success: false,
-        error: 'Contract address not configured'
+        error: `Contract address not configured for network: ${network}`
       });
     }
 
-    const cacheKey = `token_info_${contractAddress}`;
+    const cacheKey = `token_info_${network}_${contractAddress}`;
     let tokenData = getCache(cacheKey);
 
     if (!tokenData) {
-      const contract = new web3.eth.Contract(TOKEN_ABI, contractAddress);
+      const web3Instance = createWeb3Instance(network);
+      const contract = new web3Instance.eth.Contract(TOKEN_ABI, contractAddress);
 
       // 并发生成所有合约调用以提高性能
       const [name, symbol, decimals, totalSupply] = await Promise.all([
@@ -399,11 +477,12 @@ router.get('/token/info', async (req, res) => {
       ]);
 
       tokenData = {
+        network: getNetworkConfig(network).name,
         address: contractAddress,
         name: String(name),
         symbol: String(symbol),
         decimals: parseInt(String(decimals)),
-        totalSupply: web3.utils.fromWei(String(totalSupply), 'ether')
+        totalSupply: web3Instance.utils.fromWei(String(totalSupply), 'ether')
       };
 
       // 代币信息相对稳定，缓存时间可以长一些
@@ -426,17 +505,18 @@ router.get('/token/info', async (req, res) => {
 });
 
 // 获取交易历史（优化版）
-router.get('/transactions/:address', validateAddress, async (req, res) => {
+router.get('/transactions/:address/:network?', validateAddress, async (req, res) => {
   try {
-    const { address } = req.params;
+    const { address, network = 'localhost' } = req.params;
+    const web3Instance = createWeb3Instance(network);
     const page = parseInt(req.query.page as string) || 1;
     const limit = Math.min(parseInt(req.query.limit as string) || 20, 50); // 最大50条
 
-    const cacheKey = `transactions_${address}_${page}_${limit}`;
+    const cacheKey = `transactions_${network}_${address}_${page}_${limit}`;
     let cachedResult = getCache(cacheKey);
 
     if (!cachedResult) {
-      const blockNumber = await web3.eth.getBlockNumber();
+      const blockNumber = await web3Instance.eth.getBlockNumber();
       const transactions = [];
       const maxBlocks = 100; // 增加检查的区块数量
       const startBlock = Math.max(0, Number(blockNumber) - maxBlocks);
@@ -444,7 +524,7 @@ router.get('/transactions/:address', validateAddress, async (req, res) => {
       // 使用并发方式获取区块，提高性能
       const blockPromises = [];
       for (let i = startBlock; i <= Number(blockNumber); i++) {
-        blockPromises.push(web3.eth.getBlock(i, true));
+        blockPromises.push(web3Instance.eth.getBlock(i, true));
       }
 
       const blocks = await Promise.all(blockPromises);
@@ -461,9 +541,9 @@ router.get('/transactions/:address', validateAddress, async (req, res) => {
                   blockNumber: Number(tx.blockNumber),
                   from: tx.from,
                   to: tx.to,
-                  value: web3.utils.fromWei(String(tx.value), 'ether'),
+                  value: web3Instance.utils.fromWei(String(tx.value), 'ether'),
                   timestamp: block.timestamp,
-                  gasPrice: tx.gasPrice ? web3.utils.fromWei(String(tx.gasPrice), 'gwei') : null,
+                  gasPrice: tx.gasPrice ? web3Instance.utils.fromWei(String(tx.gasPrice), 'gwei') : null,
                   gasUsed: block.gasUsed
                 });
 
@@ -486,6 +566,7 @@ router.get('/transactions/:address', validateAddress, async (req, res) => {
 
       cachedResult = {
         address,
+        network: getNetworkConfig(network).name,
         transactions: paginatedTransactions,
         pagination: {
           page,
